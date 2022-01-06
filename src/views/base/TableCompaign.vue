@@ -52,10 +52,7 @@ export default {
     fields: {
       type: Array,
       default () {
-        // id_copaignm, id_cus, content_tem_afterreplace, status, id_com, id_his, sendOfDate
-
-        // return ['Date','Name_comapign','Status','Count_customer','Content_template']
-        // return ['id_his','sendOfDate','content_tem_after_replace','status_action','id_com','id_cus','id_compaign']
+        return ['id','name','status','createDate','companyemail','updateDate','id_tem']
       }
     },
     caption: {

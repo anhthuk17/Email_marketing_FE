@@ -51,6 +51,12 @@ export default [{
             icon: 'cil-pencil'
         },
         {
+            _name: 'CSidebarNavItem',
+            name: 'Compaign',
+            to: '/theme/compaign',
+            icon: 'cil-pencil'
+        },
+        {
             _name: 'CSidebarNavTitle',
             _children: ['Components']
         },

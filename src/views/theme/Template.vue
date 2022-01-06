@@ -40,7 +40,17 @@
             <CCardHeader>
               <strong> Create new customer form</strong>
             </CCardHeader>
+            
             <CCardBody>
+              <CInput
+                id="output"
+                label="Template name"
+                v-model="body_tem.name_tem"
+                placeholder="Enter template name"
+                horizontal
+                v-on:keypress="isLetter($event)"
+                ref="my_input"
+              />
               <Convert :htmlOutput.sync="htmlOutput" msg="DOCX to HTML converter" />
               
           
@@ -50,6 +60,17 @@
                 :config="editorConfig"
               ></ckeditor>
             </CCardBody>
+            <CCol sm="12">
+            <CButton
+              type="submit"
+              class="mr-1"
+              color="success"
+              style="margin: 20px; float:right"
+              @click.prevent="createTemp()"
+            >
+              Create new template</CButton
+            >
+            </CCol>
             
           </CCard>
         </CCol>
@@ -63,9 +84,10 @@ import CTableWrapper from "../base/TableTemplate.vue";
 import usersData from "../users/UsersDataTemplate";
 import Convert from "../../components/Convert.vue";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import service from "../../../plugin/axios";
 export default {
   name: "Template",
-  props: ['htmlOutput'],  
+  props: ['htmlOutput'],
   data() {
     return {
       documentModal: false,
@@ -76,9 +98,16 @@ export default {
       editorConfig: {
         // The configuration of the editor.
       },
+      body_tem: {
+        content_tem:"",
+        status_tem:true,
+        id_com: 1,
+        name_tem:""
+    }
     };
   },
   components: { Convert, CTableWrapper },
+
   methods: {
     shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
@@ -93,6 +122,33 @@ export default {
     getShuffledUsersData() {
       return this.shuffleArray(usersData.slice(0));
     },
+    createTemp(){
+      console.log(this.htmlOutput)
+      this.body_tem.content_tem= this.htmlOutput
+      this.name_tem=this.body_tem.name_tem
+      console.log(this.name_tem)
+      try {
+        const result = service.post(`templates`, this.body_tem).then((res) => {
+          console.log(this.body_tem);
+          service
+        .get(`templates`)
+        .then((result) => {
+          localStorage.setItem('storedData', JSON.stringify(result.data.data))
+          console.log(result.data.data );
+        })
+        .catch((err) => {});
+
+          // if (result.status === 200) {
+          //   console.log(this.body);
+          // }
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },async getNameTem() {
+      
+    }
+    
 
     // onChangeProspectus(event) {
     //   let file = event.target.files[0];
@@ -114,4 +170,8 @@ export default {
     position: absolute;
     z-index: 10000;
 }
+.modal-footer{
+  display: none;
+}
+
 </style>

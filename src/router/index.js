@@ -21,6 +21,8 @@ const Template = () =>
     import ('@/views/theme/Template')
 const History = () =>
     import ('@/views/theme/History')
+const Compaign = () =>
+    import ('@/views/theme/Compaign')
 
 const Charts = () =>
     import ('@/views/charts/Charts')
@@ -159,6 +161,11 @@ function configRoutes() {
                             path: 'history',
                             name: 'history',
                             component: History
+                        },
+                        {
+                            path: 'compaign',
+                            name: 'compaign',
+                            component: Compaign
                         }
                     ]
                 },
