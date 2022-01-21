@@ -23,6 +23,8 @@ const History = () =>
     import ('@/views/theme/History')
 const Compaign = () =>
     import ('@/views/theme/Compaign')
+const WhitePage = () =>
+    import ('@/views/theme/WhitePage')
 
 const Charts = () =>
     import ('@/views/charts/Charts')
@@ -166,7 +168,12 @@ function configRoutes() {
                             path: 'compaign',
                             name: 'compaign',
                             component: Compaign
-                        }
+                        },
+                        {
+                            path: 'whitepage',
+                            name: 'whitepage',
+                            component: WhitePage
+                        },
                     ]
                 },
                 {

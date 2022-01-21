@@ -57,6 +57,12 @@ export default [{
             icon: 'cil-pencil'
         },
         {
+            // _name: 'CSidebarNavItem',
+            // name: 'WhitePage',
+            to: '/theme/whitepage',
+            // icon: 'cil-pencil'
+        },
+        {
             _name: 'CSidebarNavTitle',
             _children: ['Components']
         },

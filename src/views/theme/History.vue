@@ -161,6 +161,9 @@
                        <th> {{ key.age_cus}}</th>
                     </tr>
                 </table>
+                <CButton color="success" @click=" actionCus= false, sendEmail=true" @click.prevent="getNow()">
+                  Continue campaign with these customers
+                </CButton>
               </CTab>
               <CTab title="Nothing" active>
                 <table>
@@ -441,12 +444,13 @@ export default {
       parse_csv: [],
       sendEmail: false,
       body_compaign:{
-        name_compaign:"",
+        name_compaign: '',
         status:'u',
         createOfDate_compaign:"",
         updateOfDate_compaign:null,
         id_tem:1,
-        content_tem:""
+        content_tem:"",
+        related_campaign_id:0
       },
       body_cus_compaign:{
         id_cus:0,
@@ -458,17 +462,21 @@ export default {
       body_cus:[],
       listIdCusToSendMail:[],
       listEmailCusToSendMail:[],
-      body_reqq:[]
+      body_reqq:[],
+      name_compaign_parent:''
     }
   },
   components: { CTableWrapper },
   created(){
+    // this.get()
     this.getShuffledUsersData()
     const a = JSON.parse(localStorage.getItem("storedData"));
     this.options = a.map((x) => x.name_tem).filter((x) => x != null);
     this.getCustomer()
   },
   methods: { 
+    // async get(){
+    //   },
     async getCustomer() {
       service
         .get(`customers`)
@@ -513,9 +521,21 @@ export default {
        await service
           .get(`histories/listCus/${this.body_req.id_compaign}`)
           .then((res) => {
-            console.log(res.data.data);
             this.action_cus=res.data.data
 
+          })
+        await service
+          .get(`histories/InfCam/${this.body_req.id_compaign}`)
+          .then((res) => {
+            this.name_compaign_parent=res.data.data.find(x => x.name_compaign).name_compaign
+            if(this.body_compaign.name_compaign != ''){
+            }else{
+            this.body_compaign.name_compaign += this.name_compaign_parent
+            }
+            this.body_compaign.related_campaign_id=this.body_req.id_compaign
+            console.log(this.name_compaign_parent);
+            console.log(this.body_compaign.related_campaign_id);
+            console.log(this.body_compaign.name_compaign);
           })
       } catch (error) {
         console.log("Không thành công, vui lòng chọn lại");
@@ -533,10 +553,14 @@ export default {
               this.list_action_cus1.push(this.action_cus[i])
               this.listIdCusToSendMail.push(this.action_cus[i].id_cus)
               this.listEmailCusToSendMail.push(this.action_cus[i].email_cus)
-
+              
               console.log(this.action_cus[i]);
+              console.log(this.listIdCusToSendMail);
+
             }else if(this.action_cus[i].status_action=='o') {
               this.list_action_cus2.push(this.action_cus[i])
+              this.listIdCusToSendMail.push(this.action_cus[i].id_cus)
+              this.listEmailCusToSendMail.push(this.action_cus[i].email_cus)
             }else {
               this.list_action_cus3.push(this.action_cus[i])
             }
@@ -672,7 +696,9 @@ copyTestingCodeComName(){
 
 },
 async createCompaign() {
-  // console.log(this.body_compaign);
+  
+    console.log(this.body_compaign.name_compaign +"123456789111111111111111111111");
+  // console.log(this.body_compaign.name_compaign);
   this.body_compaign.content_tem=this.content
   console.log(this.body_compaign.content_tem);
  try {
@@ -706,6 +732,20 @@ async createCompaign() {
             })
             .catch({})
     }
+
+    /*
+    async createCus_Compaign(){
+    console.log(this.listCusSendMail);
+    for(let i in this.listCusSendMail){
+      this.body_cus_compaign.id_cus=this.listCusSendMail[i].id_cus
+      console.log(this.body_cus_compaign);
+      await service.post(`cus_compaigns`, this.body_cus_compaign).then((res)=> {
+            console.log(res.data.data);
+          })
+          .catch({})
+    }
+  }
+    */ 
     
 
   },
@@ -727,7 +767,7 @@ async createCompaign() {
   
   getNow(){
     const today = new Date();
-    const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+(today.getDate()+1);
     this.body_compaign.createOfDate_compaign = date;
     this.body_cus_compaign.createOfDate_compaign = date;
     console.log(this.body_compaign.createOfDate_compaign);
