@@ -1,4 +1,5 @@
 <template>
+<div>
   <CDropdown
     inNav
     class="c-header-nav-items"
@@ -41,7 +42,7 @@
     >
       <strong>Settings</strong>
     </CDropdownHeader>
-    <CDropdownItem>
+    <CDropdownItem @click="chooseIfoCom = true">
       <CIcon name="cil-user" /> Profile
     </CDropdownItem>
     <CDropdownItem>
@@ -56,27 +57,75 @@
       <CBadge color="primary" class="mfs-auto">{{ itemsCount }}</CBadge>
     </CDropdownItem>
     <CDropdownDivider/>
-    <CDropdownItem>
+    <CDropdownItem >
       <CIcon name="cil-shield-alt" /> Lock Account
     </CDropdownItem>
-    <CDropdownItem>
+    <CDropdownItem @click.prevent="logOut()">
       <CIcon name="cil-lock-locked" /> Logout
     </CDropdownItem>
   </CDropdown>
+   <div>
+      <CModal
+        title="Profile"
+        color="success"
+        :show.sync="chooseIfoCom"
+      >
+        <CCol sm="12">
+          <CCard>
+            <CCardHeader>
+              <strong>Profile</strong>
+            </CCardHeader>
+            <CCardBody>
+              <b>Name Company: </b> {{body_com.name_com}}<br>
+              <b>Email Company: </b>{{body_com.email_com}}<br>
+              <b>Phone Company: </b>{{body_com.phone_com}}<br>
+              <b>Address Company: </b>{{body_com.address_com}}<br>
+            </CCardBody>
+          </CCard>
+        </CCol>
+      </CModal>
+    </div>
+</div>
+
 </template>
 
+
 <script>
+// import Login from "../views/pages/Login.vue";
 export default {
   name: 'TheHeaderDropdownAccnt',
+  // props: ['body_com']  ,
   data () {
+
     return { 
-      itemsCount: 42
+      itemsCount: 42,
+      chooseIfoCom:false,
+      body_com:[]
+    }
+  },
+  created(){
+    this.profile()
+  },
+
+  methods:{
+    logOut(){
+      window.location.href = "http://localhost:8080/#/pages/login";
+    },
+    profile(){
+      this.body_com = JSON.parse(localStorage.getItem("storedData"))
+      console.log( JSON.parse(localStorage.getItem("storedData")).address_com);
+    // const a = JSON.parse(localStorage.getItem("storedData"));
+    //  console.log(a.map((x) => x.address_com).filter((x) => x != null));
+    // console.log("=====================", this.options);
     }
   }
 }
 </script>
 
-<style scoped>
+<style>
+  .modal-dialog {
+    max-width: 500px;
+  }
   .c-icon {
     margin-right: 0.3rem;
   }

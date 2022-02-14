@@ -49,6 +49,10 @@ export default {
         {
           text: 'Go to dashboard',
           to: '/dashboard'
+        },
+        {
+          text: 'Go to dashboard statistic',
+          to: '/dashboard_statistic'
         }, 
         {
           text: 'Go to widgets',

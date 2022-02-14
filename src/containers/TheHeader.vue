@@ -18,6 +18,9 @@
         <CHeaderNavLink to="/dashboard">
           Dashboard
         </CHeaderNavLink>
+        <CHeaderNavLink to="/dashboard_statistic">
+          Dashboard statistic
+        </CHeaderNavLink>
       </CHeaderNavItem>
       <CHeaderNavItem class="px-3">
         <CHeaderNavLink to="/users" exact>

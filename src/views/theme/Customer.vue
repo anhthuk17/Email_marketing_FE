@@ -4,12 +4,13 @@
       <div class="card-header">Headings</div>
       <div class="card-body">
         <CCol lg="12">
-          <CTableWrapper :items="getShuffledUsersData()">
-            <template #header>
-              <CIcon name="cil-grid" /> Customer Table
+          <!-- <CTableWrapper :items="getShuffledUsersData()"> -->
+            <!-- <template #header> -->
+              <!-- <CIcon name="cil-grid" />  -->
+              Customer Table
               <div class="card-header-actions">
                 <CButton color="success" @click="sendEmail = true" class="mr-1">
-                  Send email
+                  Create new compaign
                 </CButton>
                 <CButton
                   color="success"
@@ -26,8 +27,37 @@
                   Import Excel
                 </CButton>
               </div>
-            </template>
-          </CTableWrapper>
+            <!-- </template> -->
+            <table>
+                  <thead>
+			            	<tr>
+			            		<th> Name customer</th>
+			            		<th> Address customer</th>
+			            		<th> Email customer</th>
+			            		<th> Phone customer</th>
+			            		<th> Status customer</th>
+			            		<th> Gender customer</th>
+                      <th> Type customer</th>
+                      <th> Age customer</th>
+			            	</tr>
+			            </thead>
+                    <tr v-for="key in body_rq"
+                        :key="key.id" >
+                       <th> {{ key.name_cus}}</th>
+                       <th> {{ key.address_cus}}</th>
+                       <th> {{ key.email_cus}}</th>
+                       <th> {{ key.phone_cus}}</th>
+                       <th> {{ key.status_cus}}</th>
+                       <th> {{ key.gender_cus}}</th>
+                       <th> {{ key.type_cus}}</th>
+                       <th> {{ key.age_cus}}</th>
+                       <!-- <th @click="actionCus=true" @click.prevent="getIdCompaign(key.id_compaign), statusActionCus()"> {{ key.name_compaign}}</th>
+                       <th @click="chooseCus = true" @click.prevent=" getIdCompaign(key.id_compaign),countCus()"> {{ key.count }}<div style="display: initial;" ><CIcon name="cil-user" style="z-index: 9999;"/></div></th>
+                       <th @click="actionCus=true" @click.prevent="getIdCompaign(key.id_compaign), statusActionCus()"> {{ key.name_tem}}</th>
+                       <th @click="actionCus=true" @click.prevent="getIdCompaign(key.id_compaign), statusActionCus()"> {{ getDate(key.sendOfDate) }}</th> -->
+                    </tr>
+                </table>
+          <!-- </CTableWrapper> -->
         </CCol>
       </div>
     </div>
@@ -73,8 +103,16 @@
                     <span class="code text-red" style="display:none" >{{ com_name }}</span>
                     <input type="hidden" id="testing-code-com-name" :value="com_name">
                 </div>
-            </div>
-                    <span class="code text-red" style="color: red; margin-left:10px" ><i>Choosing item to copy to content for template</i></span>
+                <span class="code text-red" style="color: red; margin-left:10px" ><i>Choosing item to copy to content for template</i></span>
+                <div class="form-control wizard-form-control d-flex align-items-center testing-code px-20px mb-10px" style="margin-top: 1rem">
+                    <span style="margin-left:10px; margin-right:10px; background-color: steelblue; color: white; border-radius: 5px; padding: 2px 5px;">Generate link product</span>
+                    <!-- <span class="code text-red" style="display:none" >{{  }}</span> -->
+                    <input v-model="link_product">
+                    <button @click.prevent="generatorLinkProduct()" id="generation"> Ok </button>
+                    <span style="margin-left:10px" >{{ link_product_generated }}</span>
+                </div>
+                <span class="code text-red" style="color: red; margin-left:10px" ><i>Input your link product to generation to copy to content for template</i></span>
+            </div>    
             <CCardBody>
               <CCol sm="16">
                 <CCard>
@@ -158,7 +196,6 @@
                 color="success"
                 class="mr-1"
                 style="margin: 20px; float: right"
-                @click.prevent="getIdTem()"
                 @click="(chooseTem = false)"
               >
                 Close</CButton
@@ -413,7 +450,7 @@
                 v-model="body.email_cus"
                 placeholder="Enter your email name"
                 horizontal
-                @blur="validateEmail"
+                v-on:keypress="validateEmail()"
                 ref="my_email"
               />
               <div class="form-row">
@@ -641,7 +678,9 @@ export default {
         createOfDate_compaign:"",
         updateOfDate_compaign:null,
         id_tem:1,
-        content_tem:""
+        content_tem:"",
+        id_com:1,
+        related_campaign_id:null
       },
       body_cus_compaign:{
         id_cus:0,
@@ -672,6 +711,8 @@ export default {
       com_address:"#com_add#",
       com_phone: "#com_phone#",
       com_name:"#com_name#",
+      link_product:'',
+      link_product_generated:'',
       //   // loc cus type ,age=> input, gender=>select option .... 2
       //   // chon item de gan vao tem:...,com_add, com_number, com_name: done
       //   // tao chua muon gui=> save lai=> compaign (luu lai id ds cus + id tem) id, ten, ngay thang tao
@@ -694,6 +735,13 @@ export default {
       filterType:[],
       listCusSendMail:[],
       filter:[],
+      body_rq:[],
+      b:[],
+      listEmailAllCus:[],
+      listEmailCusImport:[],
+      email_exist:[],
+      difference:[],
+      intersection:[]
     };
   },
   components: { CTableWrapper, Forms },
@@ -706,18 +754,34 @@ export default {
   created() {
     // console.log(this.CTableWrapper);
     this.getCustomer();
-    const a = JSON.parse(localStorage.getItem("storedData"));
-    this.options = a.map((x) => x.name_tem).filter((x) => x != null);
-    console.log("=====================", this.options);
+    this.getNameTem();
+    // const a = JSON.parse(localStorage.getItem("storedData"));
+    // this.options = a.map((x) => x.name_tem).filter((x) => x != null);
+    // console.log("=====================", this.options);
     
   },
   methods: {
+    async getNameTem(){
+      service
+        .get(`templates`)
+        .then((result) => {
+          console.log(result.data.data);
+          this.b = result.data.data
+          this.options = this.b.map((x) => x.name_tem).filter((x) => x != null);
+        })
+        .catch((err) => {});
+    },
     async getCustomer() {
       service
         .get(`customers`)
         .then((result) => {
-          console.log(result.data.data);
+          // console.log(result.data.data);
           this.body_req = JSON.stringify(result.data.data)
+          this.body_rq = result.data.data
+          this.listEmailAllCus = result.data.data.map((x)=>x.email_cus)
+          
+          // console.log(this.listEmailAllCus);
+
           // console.log("+++++++++++++++++++++++++++"+this.body_req);
           // this.body_req=a.map((x)=>x.email_cus)
           // id_cus.name_cus.address_cus.email_cus.phone_cus.status_cus.gender_cus.id_tem.id_com
@@ -726,13 +790,18 @@ export default {
         .catch((err) => {});
     },
     // create one customer
-    createCustomer() {
+    async createCustomer() {
+     for( let i in this.listEmailAllCus){
+          if(this.body.email_cus == this.listEmailAllCus[i]){
+            alert("Email exist, please try another email")
+            // break;
+            return 0;
+          }
+      }
+      console.log("h");
       try {
-        const result = service.post(`customers`, this.body).then((res) => {
+        await service.post(`customers`, this.body).then((res) => {
           console.log(this.body);
-          // if (result.status === 200) {
-          //   console.log(this.body);
-          // }
         });
       } catch (error) {
         console.log(error);
@@ -779,9 +848,9 @@ export default {
       }
     },
 
-    validateEmail() {
-      let text;
-      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email)) {
+     async validateEmail() {
+      let text="";
+      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.body.email_cus)) {
         text = "";
         document.getElementById("email").innerHTML = text;
       } else {
@@ -838,7 +907,7 @@ export default {
       return result; // JavaScript object
     },
 
-    loadCSV(e) {
+     loadCSV(e) {
       var vm = this;
       var arr = [];
       var reader = new FileReader();
@@ -864,6 +933,7 @@ export default {
           });
           vm.list_cus = JSON.stringify(cuss);
           console.log(vm.parse_csv + " : vm.parse_csv");
+          
         } catch (error) {
           console.log(error);
         }
@@ -876,15 +946,33 @@ export default {
     },
 
     // import list customer to mysql
-    setListCus(body) {
-      this.list_cus = body;
-      console.log(body + "asss");
-    },
+    // setListCus(body) {
+    //   this.list_cus = body;
+    //   console.log(body + "asss");
+    // },
     async importCus(body) {
-      console.log(body);
+      this.list_cus=[]
+      this.listEmailCusImport = (JSON.parse(body))
+      this.list_cus = this.listEmailCusImport.map((x)=>x.email_cus).filter(x => this.listEmailAllCus.indexOf(x) === -1);
+      this.email_exist = this.listEmailCusImport.map((x)=>x.email_cus).filter(x => this.listEmailAllCus.includes(x));
+      
+      for (let i in this.list_cus){
+        this.difference.push(this.listEmailCusImport.find((x)=> x.email_cus == this.list_cus[i]))
+        // console.log(this.difference)
+      }
+      for (let i in this.email_exist){
+        this.intersection.push(this.listEmailCusImport.find((x)=> x.email_cus == this.email_exist[i]))
+        // console.log(this.intersection)
+      }
+      console.log("import");
+      console.log(this.difference );
+      console.log("exist");
+      console.log(this.intersection );
+      alert(this.intersection.map((x)=>x.email_cus+"\n").join('')+"\n"+ "Email exist, please try another email");
+
       try {
         const result = service
-          .post(`customers/multiple`, this.list_cus)
+          .post(`customers/multiple`, this.difference)
           .then((res) => {
             console.log(Object.values(res));
           });
@@ -894,10 +982,10 @@ export default {
       }
     },
     getIdTem() {
-      const b = JSON.parse(localStorage.getItem("storedData"));
-      const a = b.filter(x => x.name_tem == this.selectedID)
+      // const b = JSON.parse(localStorage.getItem("storedData"));
+      const a = this.b.filter(x => x.name_tem == this.selectedID)
       this.content = JSON.stringify(
-        b.filter(x => x.name_tem == this.selectedID)
+        this.b.filter(x => x.name_tem == this.selectedID)
       );
       this.content = a[0].content_tem
       this.body_compaign.id_tem=a[0].id_tem
@@ -1165,8 +1253,11 @@ async createCompaign() {
           })
           .catch({})
     }
-    
-
+  },
+  generatorLinkProduct(){
+    console.log(11111111);
+    this.link_product_generated = 'https://email-marketing-01.herokuapp.com/?id=#idhistory&url='+this.link_product;
+    console.log('https://email-marketing-01.herokuapp.com/?id=#idhistory&url='+this.link_product);
   }
   
 }
@@ -1286,6 +1377,7 @@ span.title:hover{opacity: 0.8;}
 .btn:disabled{
   opacity: 0.65;
 }
+
 
 </style>
 

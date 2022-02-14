@@ -9,6 +9,14 @@ export default [{
                 color: 'primary',
                 text: 'NEW'
             }
+        }, {
+            _name: 'CSidebarNavItem',
+            name: 'Dashboard statistic',
+            to: '/dashboard_statistic',
+            icon: 'cil-speedometer',
+            badge: {
+                color: 'primary',
+            }
         },
         {
             _name: 'CSidebarNavTitle',
@@ -26,12 +34,12 @@ export default [{
             to: '/theme/typography',
             icon: 'cil-pencil'
         },
-        {
-            _name: 'CSidebarNavItem',
-            name: 'app',
-            to: '/theme/app',
-            icon: 'cil-pencil'
-        },
+        // {
+        //     _name: 'CSidebarNavItem',
+        //     name: 'app',
+        //     to: '/theme/app',
+        //     icon: 'cil-pencil'
+        // },
         {
             _name: 'CSidebarNavItem',
             name: 'Customer',

@@ -10,6 +10,7 @@
                   <h1>Login</h1>
                   <p class="text-muted">Sign In to your account</p>
                   <CInput
+                    v-model="body_login.username"
                     placeholder="Username"
                     autocomplete="username email"
                   >
@@ -19,12 +20,13 @@
                     placeholder="Password"
                     type="password"
                     autocomplete="curent-password"
+                    v-model="body_login.password"
                   >
                     <template #prepend-content><CIcon name="cil-lock-locked"/></template>
                   </CInput>
                   <CRow>
                     <CCol col="6" class="text-left">
-                      <CButton color="primary" class="px-4">Login</CButton>
+                      <CButton color="primary" class="px-4" @click.prevent="login()">Login</CButton>
                     </CCol>
                     <CCol col="6" class="text-right">
                       <CButton color="link" class="px-0">Forgot password?</CButton>
@@ -47,8 +49,11 @@
                   color="light"
                   variant="outline"
                   size="lg"
+                  href="http://localhost:8080/#/pages/register"
                 >
-                  Register Now!
+                <!-- <a href="http://localhost:8080/#/pages/register"> -->
+                Register Now!
+                <!-- </a> -->
                 </CButton>
               </CCardBody>
             </CCard>
@@ -60,7 +65,37 @@
 </template>
 
 <script>
+import service from "../../../plugin/axios";
 export default {
-  name: 'Login'
-}
+  name: 'Login',
+  data () {
+    return {
+      body_req:'',
+      body_login:{
+        username:'',
+        password:''
+      },
+      // body_com:'hello'
+    }
+  },
+methods:{
+  async login(){
+    // console.log(this.body_login.username);
+    // console.log(this.body_login.password);
+    await service
+          .post(`logins/login`, this.body_login)
+          .then((res) => {
+            if(res.data.data){
+            console.log(res.data.data);
+            // alert('Login success')
+            localStorage.setItem('storedData', JSON.stringify(res.data.data))
+            window.location.href = "http://localhost:8080/#/dashboard_statistic";
+            }
+            else{
+              alert("Login fail. Wrong or missing information");
+            }
+          })
+        }
+      }
+    }
 </script>

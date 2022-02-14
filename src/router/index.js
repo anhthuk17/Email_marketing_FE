@@ -8,6 +8,8 @@ const TheContainer = () =>
 // Views
 const Dashboard = () =>
     import ('@/views/Dashboard')
+const Dashboard_statistic = () =>
+    import ('@/views/Dashboard_statistic')
 
 const Colors = () =>
     import ('@/views/theme/Colors')
@@ -119,13 +121,18 @@ export default new Router({
 function configRoutes() {
     return [{
             path: '/',
-            redirect: '/dashboard',
+            redirect: '/pages/login',
             name: 'Home',
             component: TheContainer,
             children: [{
                     path: 'dashboard',
                     name: 'Dashboard',
                     component: Dashboard
+                },
+                {
+                    path: 'dashboard_statistic',
+                    name: 'Dashboard_statistic',
+                    component: Dashboard_statistic
                 },
                 {
                     path: 'theme',

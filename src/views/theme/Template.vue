@@ -5,9 +5,10 @@
       <div class="card-body">
         <CRow>
           <CCol lg="12">
-            <CTableWrapper :items="getShuffledUsersData()">
-              <template #header>
-                <CIcon name="cil-grid" /> Template Table
+            <!-- <CTableWrapper :items="getShuffledUsersData()"> -->
+              <!-- <template #header> -->
+                <!-- <CIcon name="cil-grid" />  -->
+                Template Table
                 <div class="card-header-actions">
                   <CButton
                     color="success"
@@ -16,14 +17,28 @@
                   >
                     Import Document
                   </CButton>
-                  <!-- <input
-                    type="file"
-                    class="form-control-file"
-                    @change="onChangeProspectus"
-                  /> -->
                 </div>
-              </template>
-            </CTableWrapper>
+              <!-- </template> -->
+              <table>
+                  <thead>
+			            	<tr>
+			            		<th> Id Template</th>
+			            		<th> Name Template</th>
+			            		<!-- <th> Content Template</th> -->
+			            	</tr>
+			            </thead>
+                    <tr v-for="key in body_req"
+                        :key="key.id" >
+                       <th> {{ key.id_tem}}</th>
+                       <th> {{ key.name_tem}}</th>
+                       <!-- <th> {{ key.content_tem}}</th> -->
+                       <!-- <th @click="actionCus=true" @click.prevent="getIdCompaign(key.id_compaign), statusActionCus()"> {{ key.name_compaign}}</th>
+                       <th @click="chooseCus = true" @click.prevent=" getIdCompaign(key.id_compaign),countCus()"> {{ key.count }}<div style="display: initial;" ><CIcon name="cil-user" style="z-index: 9999;"/></div></th>
+                       <th @click="actionCus=true" @click.prevent="getIdCompaign(key.id_compaign), statusActionCus()"> {{ key.name_tem}}</th>
+                       <th @click="actionCus=true" @click.prevent="getIdCompaign(key.id_compaign), statusActionCus()"> {{ getDate(key.sendOfDate) }}</th> -->
+                    </tr>
+              </table>
+            <!-- </CTableWrapper> -->
           </CCol>
         </CRow>
       </div>
@@ -87,7 +102,7 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import service from "../../../plugin/axios";
 export default {
   name: "Template",
-  props: ['htmlOutput'],
+  // props: ['htmlOutput'],
   data() {
     return {
       documentModal: false,
@@ -103,11 +118,14 @@ export default {
         status_tem:true,
         id_com: 1,
         name_tem:""
-    }
+    },
+    body_req:[]
     };
   },
   components: { Convert, CTableWrapper },
-
+  created(){
+    this.getTemplate()
+  },
   methods: {
     shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
@@ -133,7 +151,7 @@ export default {
           service
         .get(`templates`)
         .then((result) => {
-          localStorage.setItem('storedData', JSON.stringify(result.data.data))
+          // localStorage.setItem('storedData', JSON.stringify(result.data.data))
           console.log(result.data.data );
         })
         .catch((err) => {});
@@ -145,10 +163,33 @@ export default {
       } catch (error) {
         console.log(error);
       }
-    },async getNameTem() {
-      
-    }
-    
+    },
+    async getTemplate() {
+      service
+        .get(`templates`)
+        .then((result) => {
+          console.log(result.data.data);
+          this.body_req = result.data.data
+          console.log(this.body_req);
+        })
+        .catch((err) => {});
+    },
+    getIdCompaign(id){
+      // this.body_req.id_compaign=id
+    },
+    getStatusAction(action){
+      // if(action=='c'){
+      //   return 'clicked'
+      // }
+      // else if(action=='o'){
+      //   return 'opened'
+      // }else {
+      //   return 'nothing'
+      // }
+    },
+    getDate(time){
+      // return time.toString().slice(0,10);
+    },
 
     // onChangeProspectus(event) {
     //   let file = event.target.files[0];
@@ -172,6 +213,20 @@ export default {
 }
 .modal-footer{
   display: none;
+}
+  table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+td,
+th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+tr:nth-child(even) {
+  background-color: #dddddd;
 }
 
 </style>

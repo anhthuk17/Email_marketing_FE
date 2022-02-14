@@ -8,12 +8,10 @@
         "github": "https://github.com/coreui",
         "twitter": "https://twitter.com/core_ui"
     },
-    "contributors": [
-        {
-            "name": "CoreUI Team",
-            "url": "https://github.com/orgs/coreui/people"
-        }
-    ],
+    "contributors": [{
+        "name": "CoreUI Team",
+        "url": "https://github.com/orgs/coreui/people"
+    }],
     "repository": {
         "type": "git",
         "url": "git@github.com:coreui/coreui-free-vue-admin-template.git"
@@ -47,6 +45,7 @@
         "cheerio": "^1.0.0-rc.10",
         "core-js": "^3.19.1",
         "dns": "^0.2.2",
+        "luxon": "^2.3.0",
         "mammoth": "^1.4.19",
         "nodemailer": "^6.7.2",
         "postcss": "^7.0.39",
@@ -54,10 +53,15 @@
         "request": "^2.79.0",
         "save": "^2.4.0",
         "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17",
+        "v-calendar": "^2.3.4",
         "vue": "^2.6.14",
         "vue-class-component": "^7.2.6",
         "vue-router": "^3.5.1",
-        "vuex": "~3.6.2"
+        "vue-vanilla-datetime-picker": "^1.2.0",
+        "vue2-timepicker": "^1.1.6",
+        "vuejs-datepicker": "^1.6.2",
+        "vuex": "~3.6.2",
+        "weekstart": "^1.1.0"
     },
     "devDependencies": {
         "@babel/core": "^7.13.10",

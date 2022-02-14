@@ -6,7 +6,8 @@
         <CCol lg="12">
           <!-- <CTableWrapper > -->
             <!-- <template #header> -->
-              <CIcon name="cil-grid" /> History Table
+              <!-- <CIcon name="cil-grid" /> -->
+               History Table
               <div class="card-header-actions">
                 <CButton color="success" @click="myModal = true">
                   Open
@@ -120,6 +121,7 @@
 			            		<th> Gender customer</th>
                       <th> Type</th>
                       <th> Age customer</th>
+                      <th> Action time</th>
 			            	</tr>
 			            </thead>
                     <tr v-for="key in list_action_cus1"
@@ -131,6 +133,7 @@
                        <th> {{ key.gender_cus}}</th>
                        <th> {{ key.type_cus}}</th>
                        <th> {{ key.age_cus}}</th>
+                       <th> {{ getDate(key.lastUpdate)}}</th>
                     </tr>
                 </table>
                 <CButton color="success" @click=" actionCus= false, sendEmail=true" @click.prevent="getNow()">
@@ -148,6 +151,7 @@
 			            		<th> Gender customer</th>
                       <th> Type</th>
                       <th> Age customer</th>
+                       <th> Action time</th>
 			            	</tr>
 			            </thead>
                     <tr v-for="key in list_action_cus2"
@@ -159,6 +163,8 @@
                        <th> {{ key.gender_cus}}</th>
                        <th> {{ key.type_cus}}</th>
                        <th> {{ key.age_cus}}</th>
+                       <th> {{ getDate(key.lastUpdate)}}</th>
+
                     </tr>
                 </table>
                 <CButton color="success" @click=" actionCus= false, sendEmail=true" @click.prevent="getNow()">
@@ -176,6 +182,7 @@
 			            		<th> Gender customer</th>
                       <th> Type</th>
                       <th> Age customer</th>
+                       <th> Action time</th>
 			            	</tr>
 			            </thead>
                     <tr v-for="key in list_action_cus3"
@@ -186,7 +193,8 @@
                        <th> {{ key.phone_cus}}</th>
                        <th> {{ key.gender_cus}}</th>
                        <th> {{ key.type_cus}}</th>
-                       <th> {{ key.age_cus}}</th>
+                       <th> {{ key.age_cus}}</th>                       
+                       <th> {{ getDate(key.lastUpdate)}}</th>
                     </tr>
                 </table>
               </CTab>
@@ -256,7 +264,7 @@
             </CCardBody>
             <CCol sm="12">
               <CButton
-                id="button2"
+                id="button3"
                 color="success"
                 class="mr-1"
                 style="margin: 20px; float: right"
@@ -398,6 +406,7 @@ import usersData from "../users/UsersDataHistory";
 import service from "../../../plugin/axios";
 import CoreUIIcons from '../icons/CoreUIIcons.vue';
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import moment from 'moment'
 
 export default {
   name: "History",
@@ -463,20 +472,27 @@ export default {
       listIdCusToSendMail:[],
       listEmailCusToSendMail:[],
       body_reqq:[],
-      name_compaign_parent:''
+      name_compaign_parent:'',
+      b:[]
     }
   },
   components: { CTableWrapper },
   created(){
-    // this.get()
     this.getShuffledUsersData()
-    const a = JSON.parse(localStorage.getItem("storedData"));
-    this.options = a.map((x) => x.name_tem).filter((x) => x != null);
     this.getCustomer()
+    this.getNameTem()
   },
-  methods: { 
-    // async get(){
-    //   },
+  methods: {
+    async getNameTem(){
+      service
+        .get(`templates`)
+        .then((result) => {
+          console.log(result.data.data);
+          this.b = result.data.data
+          this.options = this.b.map((x) => x.name_tem).filter((x) => x != null);
+        })
+        .catch((err) => {});
+    },
     async getCustomer() {
       service
         .get(`customers`)
@@ -595,7 +611,9 @@ export default {
       }
     },
     getDate(time){
-      return time.toString().slice(0,10);
+      return moment(String(time)).format('DD-MM-YYYY hh:mm:ss A')
+      // return time.toString().slice(0,10);
+      // return result
     },
     // =============================================
     copyTestingCodeName(){
@@ -719,7 +737,7 @@ async createCompaign() {
         console.log("Không thành công, vui lòng chọn lại");
         console.log(error + "abc");
       }
-      document.getElementById("button2").disabled = false;
+      document.getElementById("button3").disabled = false;
       
     },
     async createCus_Compaign(){
@@ -750,10 +768,10 @@ async createCompaign() {
 
   },
   getIdTem() {
-      const b = JSON.parse(localStorage.getItem("storedData"));
-      const a = b.filter(x => x.name_tem == this.selectedID)
+      // const b = JSON.parse(localStorage.getItem("storedData"));
+      const a = this.b.filter(x => x.name_tem == this.selectedID)
       this.content = JSON.stringify(
-        b.filter(x => x.name_tem == this.selectedID)
+        this.b.filter(x => x.name_tem == this.selectedID)
       );
       this.content = a[0].content_tem
       this.body_compaign.id_tem=a[0].id_tem
@@ -873,3 +891,10 @@ schedule expression có khác null k, nếu khác thì chỉ dùng id_cam và id
       => nếu mail tồn tại thì t/h hàm gửi, k thì log ra)
       - lấy content_tem replace thông tin khách hàng và thông tin cty vào 
       content_tem ( sử dụng thư viện của nodejs nodemailer) => lấy mail cty sử dụng để gửi cho mail k/h 
+
+
+
+
+
+
+      
